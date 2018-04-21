@@ -6,7 +6,8 @@ class App extends Component {
     constructor() {
         super();
         this.state = {
-            value: ''
+            value: '',
+            launches: []
         };
         this.handleChange = this.handleChange.bind(this);
     }
@@ -17,8 +18,26 @@ class App extends Component {
         })
     }
 
-    reset = ()=>{
-        this.setState({value:''})
+    reset = () => {
+        this.setState({value: ''})
+    };
+
+    componentDidMount = () => {
+        fetch('https://launchlibrary.net/1.3/launch/next/10/0')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                this.setState({launches: data.launches});
+            });
+    };
+
+    renderLaunches = () => {
+        return (
+            <ul>
+                {this.state.launches.map((launch) => {
+                    return (<li>{launch.name}</li>);
+                })}
+            </ul>)
     };
 
     renderButton() {
@@ -36,6 +55,8 @@ class App extends Component {
                        onChange={this.handleChange}
                 />
                 <div>current: {this.state.value}</div>
+                <div>{this.renderLaunches()}</div>
+
                 {this.renderButton()}
             </div>
         );
